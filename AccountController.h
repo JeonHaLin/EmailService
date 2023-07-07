@@ -1,23 +1,35 @@
 #pragma once
 #include <string>
-#include <vector>
+#include <map>
+
+struct personalData {
+	std::string password;
+	std::string recoveryPhase;
+};
 
 class AccountController {
 private:
-	std::vector <std::string> id;
-	std::vector <std::string> password;
-	std::vector <std::string> recoveryPhrase;
+	std::map <std::string, personalData> userData;
 
 public:
+	AccountController();
+
 	bool isId(std::string);
 	bool isPwMatched(std::string,std::string);
 	bool isRpMatched(std::string, std::string);
 
-	void setID(std::string);
-	void setPW(std::string);
-	void setRP(std::string);
+	void setData(std::string, personalData);
 
 	int getSize();
-	std::string getID(int);
-	std::string getPW(std::string, std::string);
+
+	std::string getPW(std::string);
+	std::string getRP(std::string);
+
+	std::string getYourPW(std::string, std::string);
+	void fileRead(std::map<std::string, personalData>&, std::ifstream&);
+	void printUsers();
+	void saveAll();
+	void deleteAcc(std::string);
+	void deleteAllInfo(std::string);
+
 };

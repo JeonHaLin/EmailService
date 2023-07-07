@@ -17,7 +17,9 @@ public:
 	void start();
 	void signUp();
 	void logIn();
+	void subMenu();
 	void findPW();
 	void printUserList();
 	void exitProgram();
+
 };

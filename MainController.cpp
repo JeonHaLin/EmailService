@@ -9,6 +9,7 @@ MainController::MainController() {
 	mail = new EmailController;
 }
 MainController::~MainController() {
+
 	delete acc;
 	delete mail;
 }
@@ -16,6 +17,7 @@ MainController::~MainController() {
 void MainController::start() {
 
 	int choice;
+	
 
 	while (true) {
 		std::cout << "----Email Service----" << std::endl;
@@ -29,23 +31,22 @@ void MainController::start() {
 		switch (choice) {
 		case 1: {
 			signUp();
-			continue;
+			break;
 		}
 		case 2: {
 			logIn();
-			continue;
+			subMenu();
 		}
 		case 3: {
 			findPW();
-			continue;
+			break;
 		}
 		case 4: {
 			printUserList();
-			continue;
+			break;
 		}
 		case 5: {
 			exitProgram();
-			exit(0);
 		}
 		default: {
 			std::cout << "Wrong input!" << std::endl;
@@ -53,7 +54,7 @@ void MainController::start() {
 			std::cin.ignore(1000, '\n');
 			Sleep(1000);
 			system("cls");
-			continue;
+			break;
 		}
 		}
 	}
@@ -79,9 +80,10 @@ void MainController::signUp() {
 		std::getline(std::cin, RP);
 		break;
 	}
-	acc->setID(ID);
-	acc->setPW(PW);
-	acc->setRP(RP);
+
+	acc->setData(ID,{PW,RP});
+	acc->saveAll();
+
 	std::cout << "Success!";
 	std::cin.clear();
 	Sleep(1000);
@@ -101,6 +103,7 @@ void MainController::logIn() {
 		std::cin.clear();
 		Sleep(1000);
 		system("cls");
+		return start();
 	}
 	std::cout << "PW>> ";
 	while (true) {
@@ -110,17 +113,102 @@ void MainController::logIn() {
 			std::cin.clear();
 			Sleep(1000);
 			system("cls");
-			return;
+			return start();
 		}
 		me = ID;
 		system("cls");
 		std::cin.clear();
 		std::cout << "@@@ Welcome! @@@";
-		std::cin.clear();
 		Sleep(1000);
 		system("cls");
+
+		return subMenu();
 	}
 
+}
+void MainController::subMenu() {
+	int choice;
+	while (true) {
+		std::cout << "**" << me << ", good to see you again.**" << std::endl;
+		std::cout << "1. Send mail" << std::endl;
+		std::cout << "2. Send mail to me" << std::endl;
+		std::cout << "3. Inbox" << std::endl;
+		std::cout << "4. Sent mail" << std::endl;
+		std::cout << "5. Log out" << std::endl;
+		std::cout << std::endl;
+		std::cout << "9. Delete all info" << std::endl;
+		std::cout << "99. Delete my account" << std::endl;
+
+		std::cin >> choice;
+		switch (choice) {
+		
+		case 1: { //send mail
+			mail->sendMail();
+			break;
+		}
+		case 2: { //send mail to me
+			EmailToMe* etm = new EmailToMe(me);
+			etm->sendMail();
+			std::cout << std::endl;
+			std::cout << "The mail is sent successfully." << std::endl;
+			Sleep(1000);
+			delete etm;
+			break;
+		}
+		case 3: { //inbox
+			mail->receiveMail(me);
+
+			break;
+		}
+		case 4: { //sent mail
+			
+			break;
+		}
+		case 5: { //log out
+			system("cls");
+			return start();
+
+		}
+		case 9: { //delete all info
+			
+		}
+		
+		case 99: { //delte my account
+			std::cin.clear();
+			std::cin.ignore(1000, '\n');
+
+			std::string yourID;
+			std::cout << "Enter your ID to confirm >> ";
+			std::cin >> yourID;
+			if (yourID == me) {
+				acc->deleteAcc(me);
+				std::cout << "Successfully deleted." << std::endl;
+				std::cin.clear();
+				std::cin.ignore(1000, '\n');
+				Sleep(1000);
+				system("cls");
+				return start();
+			}
+			else {
+				std::cout << "ID verification failed. Retrun to submenu." << std::endl;
+				std::cin.clear();
+				std::cin.ignore(1000, '\n');
+				Sleep(1000);
+				system("cls");
+			}
+			break;
+		}
+
+		default: {
+			std::cout << "Wrong input!" << std::endl;
+			std::cin.clear();
+			std::cin.ignore(1000, '\n');
+			Sleep(1000);
+			system("cls");
+			break;
+		}
+		}
+	}
 }
 void MainController::findPW() {
 	std::string ID, RP;
@@ -133,7 +221,7 @@ void MainController::findPW() {
 	std::cout << "Insert the recovery phase>> ";
 	std::getline(std::cin, RP);
 
-	std::cout << acc->getPW(ID, RP) << std::endl;
+	std::cout << acc->getYourPW(ID, RP) << std::endl;
 	std::cin.clear();
 	Sleep(1000);
 	system("cls");
@@ -151,9 +239,9 @@ void MainController::printUserList() {
 		system("cls");
 		return;
 	}
-	for (int i = 0; i < acc->getSize(); i++) {
-		std::cout << i + 1 << ". " << acc->getID(i) << std::endl;
-	}
+
+	acc->printUsers();
+
 	for (int i = 0; i < acc->getSize() + 1; i++) {
 		std::cout << ".";
 		Sleep(500);
@@ -164,6 +252,7 @@ void MainController::printUserList() {
 	system("cls");
 }
 void MainController::exitProgram() {
+
 	system("cls");
 	for (int i = 0; i < 3; i++) {
 		std::cout << ".";
@@ -174,4 +263,5 @@ void MainController::exitProgram() {
 	Sleep(500);
 	std::cout << "We hope to see you again." << std::endl;
 	Sleep(2000);
+	exit(0);
 }
