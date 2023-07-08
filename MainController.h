@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <string>
 
 class AccountController;
@@ -7,7 +6,7 @@ class EmailController;
 
 class MainController{
 private:
-	std::string me = "";
+	std::string me;
 	AccountController* acc;
 	EmailController* mail;
 public:
@@ -17,9 +16,12 @@ public:
 	void start();
 	void signUp();
 	void logIn();
-	void subMenu();
+	void subMenu_normal();
+	void subMenu_business();
 	void findPW();
 	void printUserList();
 	void exitProgram();
-
+	void BackOrDelete_sent();
+	void BackOrDelete_receive();
+	void deleteAccount();
 };

@@ -6,9 +6,7 @@
 #include <windows.h>
 
 AccountController::AccountController() {
-	std::ifstream fout("./userData.txt");
-	fileRead(userData, fout);
-	fout.close();
+	fileRead(userData);
 }
 
 //Check if the given name exists.
@@ -25,7 +23,7 @@ bool AccountController::isPwMatched(std::string name, std::string pw) {
 	std::string temp;
 	for (auto it = userData.begin(); it != userData.end(); it++) {
 		if (it->first == name) {
-			temp=it->second.password;
+			temp = it->second.password;
 		}
 	}
 	if (pw == temp) return true;
@@ -42,10 +40,17 @@ bool AccountController::isRpMatched(std::string name, std::string rp) {
 	if (rp == temp) return true;
 	else return false;
 }
+std::string AccountController::isType(std::string name) {
+	for (auto it = userData.begin(); it != userData.end(); it++) {
+		if (it->first == name) {
+			return it->second.accountType;
+		}
+	}
+}
 
 //add ID to id list.
 void AccountController::setData(std::string ID, personalData PD) {
-	userData.insert(make_pair(ID,PD));
+	userData.insert(make_pair(ID, PD));
 }
 
 //getter of id size
@@ -70,7 +75,6 @@ std::string AccountController::getRP(std::string name) {
 }
 
 std::string AccountController::getYourPW(std::string ID, std::string RP) {
-	int index = 0;
 	if (isId(ID)) {
 		if (isRpMatched(ID, RP)) {
 			std::string temp;
@@ -86,19 +90,25 @@ std::string AccountController::getYourPW(std::string ID, std::string RP) {
 	return "No account found.";
 }
 
-void AccountController::fileRead(std::map<std::string, personalData>& v, std::ifstream& fin) {
-	std::string line;
+void AccountController::fileRead(std::map<std::string, personalData>& v) {
+	std::ifstream fin;
+	fin.open("./userData.txt");
 	if (fin) {
-		while (std::getline(fin, line)) {
+		userData.clear();
+		char temp;
+		std::string line;
+		while (!fin.eof()) {
+
+			std::getline(fin, line);
 
 			std::string id;
 			personalData data;
 
 			std::istringstream iss(line);
-			std::getline(iss, id, ',');
-			std::getline(iss, data.password, ',');
-			std::getline(iss, data.recoveryPhase, ',');
-
+			std::getline(iss, id, '|');
+			std::getline(iss, data.password, '|');
+			std::getline(iss, data.recoveryPhase, '|');
+			std::getline(iss, data.accountType, '|');
 			v.insert(std::make_pair(id, data));
 		}
 	}
@@ -106,12 +116,32 @@ void AccountController::fileRead(std::map<std::string, personalData>& v, std::if
 		std::ofstream emptyFile("./userData.txt");
 		emptyFile.close();
 	}
+	fin.close();
+}
+void AccountController::fileWrite(std::map<std::string, personalData>& m) {
+	std::ofstream fout;
 
+	fout.open("./userData.txt");
+
+	if (!fout) {
+		std::cout << "Error!";
+		return;
+	}
+	for (auto it = ++m.begin(); it != m.end(); it++) {
+		fout << it->first << '|';
+		fout << it->second.password << '|';
+		fout << it->second.recoveryPhase << '|';
+		fout << it->second.accountType << '|' << '\n';
+
+	}
+	fout.close();
 }
 
 void AccountController::printUsers() {
-	for (auto it = userData.begin(); it != userData.end(); it++) {
-		std::cout << it->first << std::endl;
+	fileRead(userData);
+	int count = 0;
+	for (auto it = ++userData.begin(); it != userData.end(); it++) {
+		std::cout << "[ " << ++count << " ] " << it->first << std::endl;
 	}
 }
 void AccountController::saveAll() {
@@ -124,15 +154,17 @@ void AccountController::saveAll() {
 	}
 
 	for (auto it = userData.begin(); it != userData.end(); it++) {
-		fout << it->first << ',';
-		fout << it->second.password << ',';
-		fout << it->second.recoveryPhase << std::endl;
+		fout << it->first << '|';
+		fout << it->second.password << '|';
+		fout << it->second.recoveryPhase << '|';
+		fout << it->second.accountType << '|' << '\n';
 	}
-	fout.close();	
+	fout.close();
 }
 
 void AccountController::deleteAcc(std::string name) {
 	userData.erase(name);
+	fileWrite(userData);
 
 	system("cls");
 	for (int i = 0; i < 3; i++) {
@@ -144,8 +176,4 @@ void AccountController::deleteAcc(std::string name) {
 	Sleep(500);
 	std::cout << "We hope to see you again." << std::endl;
 	Sleep(2000);
-}
-
-void AccountController::deleteAllInfo(std::string) {
-	
 }

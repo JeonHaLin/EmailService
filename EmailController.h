@@ -3,7 +3,9 @@
 #include <string>
 #include <fstream>
 #include <Windows.h>
-struct email {
+#include <map>
+
+struct emailData {
     std::string sender;
     std::string receiver;
     std::string title;
@@ -12,11 +14,11 @@ struct email {
 
 class EmailController {
 private:
-    email mail;
+    std::map <std::string,emailData> emailDataMap;
 public:
     EmailController() {};
-    EmailController(std::string);
 
+    /*
     std::string getSender();
     std::string getReceiver();
     std::string getTitle();
@@ -26,21 +28,25 @@ public:
     void setReceiver(std::string);
     void setTitle(std::string);
     void setContent(std::string);
-
-    void sentMail(std::string);
-    void sendMail();
-    void receiveMail(std::string);
+    */
+    virtual void sentMail(std::string);
+    virtual void sendMail(std::string);
+    virtual void receiveMail(std::string);
+    virtual void fileRead(std::map<std::string, emailData>&, std::ifstream&);
+    virtual void fileWrite(std::map<std::string, emailData>&, std::ofstream&);
+    virtual void deleteSentMail(std::string);
+    virtual void deleteReceiveMail(std::string);
 
 };
 class EmailToMe :public EmailController {
-private:
-    email mail;
+    emailData mail;
 public:
-    EmailToMe(std::string);
+    void sendMail(std::string) override;
 };
-class EmailToCustomer :public EmailController {
-private:
-    email mail;
+class BusinessEmail :public EmailController {
+    emailData mail;
 public:
-    EmailToCustomer(std::string);
+    void setTitle(std::string);
+    void setContent(std::string);
+    void sendMail(std::string) override;
 };
