@@ -1,7 +1,7 @@
 #include "EmailController.h"
 #include <iostream>
 #include <string>
-#include <map>
+#include <vector>
 #include <sstream>
 
 /*
@@ -73,16 +73,18 @@ void EmailController::sendMail(std::string me) {
 }
 bool EmailController::sentMail(std::string me) {
 	bool found = false;
+	int count = 0;
+	fileRead(emailVector);
 
-	fileRead(emailDataMap);
-
-	for (auto it = emailDataMap.begin(); it != emailDataMap.end(); it++) {
+	for (auto it = emailVector.begin(); it != emailVector.end(); it++) {
 		std::string buff;
-		if (it->second.sender == me) {
+		if (it->sender == me) {
+			std::cout << "< Sent mail no. " << ++count << " >" << std::endl;
 			std::cout << "From. : " << me << std::endl;
-			std::cout << "To. " << it->second.receiver << std::endl;
-			std::cout << "Title :  " << it->second.title << std::endl;
-			std::cout << "Content : " << it->second.content << std::endl;
+			std::cout << "To. " << it->receiver << std::endl;
+			std::cout << "Title :  " << it->title << std::endl;
+			std::cout << "Content : " << it->content << std::endl;
+			std::cout << std::endl;
 			found = true;
 		}
 	}
@@ -94,16 +96,18 @@ bool EmailController::sentMail(std::string me) {
 }
 bool EmailController::receiveMail(std::string me) {
 	bool found = false;
+	int count = 0;
+	fileRead(emailVector);
 
-	fileRead(emailDataMap);
 
-
-	for (auto it = emailDataMap.begin(); it != emailDataMap.end(); it++) {
-		if (it->second.receiver == me) {
-			std::cout << "From. " << it->second.sender << std::endl;
+	for (auto it = emailVector.begin(); it != emailVector.end(); it++) {
+		if (it->receiver == me) {
+			std::cout << "< Received mail no. " << ++count << " >" << std::endl;
+			std::cout << "From. " << it->sender << std::endl;
 			std::cout << "To. : " << me << std::endl;
-			std::cout << "Title :  " << it->second.title << std::endl;
-			std::cout << "Content : " << it->second.content << std::endl;
+			std::cout << "Title :  " << it->title << std::endl;
+			std::cout << "Content : " << it->content << std::endl;
+			std::cout << std::endl;
 			found = true;
 		}
 	}
@@ -113,11 +117,11 @@ bool EmailController::receiveMail(std::string me) {
 	}
 	return found;
 }
-void EmailController::fileRead(std::map<std::string, emailData>& m) {
+void EmailController::fileRead(std::vector <emailData>& v) {
 	std::ifstream fin;
 	fin.open("./mailData.txt");
 	if (fin) {
-		m.clear();
+		v.clear();
 		std::string line;
 		while (!fin.eof()) {
 			std::getline(fin, line);
@@ -131,9 +135,7 @@ void EmailController::fileRead(std::map<std::string, emailData>& m) {
 			std::getline(iss, data.title, '|');
 			std::getline(iss, data.content, '|');
 
-			std::string temp = data.sender;
-
-			m.insert(std::make_pair(temp, data));
+			v.push_back(data);
 		}
 		fin.close();
 	}
@@ -142,7 +144,7 @@ void EmailController::fileRead(std::map<std::string, emailData>& m) {
 		emptyFile.close();
 	}
 }
-void EmailController::fileWrite(std::map<std::string, emailData>& m) {
+void EmailController::fileWrite(std::vector <emailData>& v) {
 	std::ofstream fout;
 	fout.open("./mailData.txt");
 
@@ -150,22 +152,29 @@ void EmailController::fileWrite(std::map<std::string, emailData>& m) {
 		std::cout << "Error!";
 		return;
 	}
-	for (auto it = emailDataMap.begin(); it != emailDataMap.end(); it++) {
-		fout << it->second.sender << '|';
-		fout << it->second.receiver << '|';
-		fout << it->second.title << '|';
-		fout << it->second.content << '|' << '\n';
+	for(int i =0;i<v.size();i++){
+		fout << v[i].sender << '|';
+		fout << v[i].receiver << '|';
+		fout << v[i].title << '|';
+		fout << v[i].content << '|' << '\n';
 	}
 	fout.close();
 }
 
 void EmailController::deleteSentMail(std::string me) {
 
-	fileRead(emailDataMap);
+	fileRead(emailVector);
 
-	emailDataMap.erase(me);
+	for (auto it = emailVector.begin(); it != emailVector.end();) {
+		if (it->sender == me) {
+			it = emailVector.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
 
-	fileWrite(emailDataMap);
+	fileWrite(emailVector);
 
 	system("cls");
 	for (int i = 0; i < 3; i++) {
@@ -177,15 +186,18 @@ void EmailController::deleteSentMail(std::string me) {
 }
 void EmailController::deleteReceiveMail(std::string me) {
 
-	fileRead(emailDataMap);
+	fileRead(emailVector);
 
-	for (auto it = emailDataMap.begin(); it != emailDataMap.end(); it++) {
-		if (it->second.receiver == me) {
-			emailDataMap.erase(it->first);
+	for (auto it = emailVector.begin(); it != emailVector.end();) {
+		if (it->receiver == me) {
+			it = emailVector.erase(it);
+		}
+		else {
+			++it;
 		}
 	}
 
-	fileWrite(emailDataMap);
+	fileWrite(emailVector);
 
 	system("cls");
 	for (int i = 0; i < 3; i++) {

@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream>
 #include <Windows.h>
-#include <map>
+#include <vector>
 
 struct emailData {
     std::string sender;
@@ -14,7 +14,7 @@ struct emailData {
 
 class EmailController {
 private:
-    std::map <std::string,emailData> emailDataMap;
+    std::vector <emailData> emailVector;
 public:
     EmailController() {};
 
@@ -33,8 +33,8 @@ public:
     virtual void sendMail(std::string);
     virtual bool receiveMail(std::string);
     virtual bool sentMail(std::string);
-    virtual void fileRead(std::map<std::string, emailData>&);
-    virtual void fileWrite(std::map<std::string, emailData>&);
+    virtual void fileRead(std::vector <emailData>&);
+    virtual void fileWrite(std::vector <emailData>&);
     virtual void deleteSentMail(std::string);
     virtual void deleteReceiveMail(std::string);
 

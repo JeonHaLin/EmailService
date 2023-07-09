@@ -208,9 +208,6 @@ void MainController::subMenu_normal() {
 		case 1: {
 			std::cout << "**Send mail**" << std::endl;
 			mail->sendMail(me);
-			std::cin.clear();
-			Sleep(1000);
-			system("cls");
 			break;
 		}
 		//send mail to me
@@ -225,22 +222,24 @@ void MainController::subMenu_normal() {
 			found = mail->receiveMail(me);
 			if (found) {
 				BackOrDelete_receive();
+				break;
 			}
 			else {
 				Back();
+				break;
 			}
-			break;
 		}
 		//sent mail
 		case 4: {
 			found = mail->sentMail(me);
 			if (found) {
 				BackOrDelete_sent();
+				break;
 			}
 			else {
 				Back();
+				break;
 			}
-			break;
 		}
 		//log out
 		case 5: {
@@ -330,11 +329,6 @@ void MainController::subMenu_business() {
 			}
 			else {
 				etc->sendMail(me);
-				std::cout << std::endl;
-				std::cout << "The mail is sent successfully." << std::endl;
-				std::cin.clear();
-				Sleep(1000);
-				system("cls");
 				return subMenu_business();
 			}
 		}
@@ -641,7 +635,7 @@ void MainController::BackOrDelete_receive() {
 				std::cin.ignore(2000, '\n');
 				Sleep(1000);
 				system("cls");
-				return start();
+				break;
 			}
 			else {
 				std::cout << "ID verification failed. Retrun to submenu." << std::endl;
