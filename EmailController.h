@@ -29,24 +29,13 @@ public:
     void setTitle(std::string);
     void setContent(std::string);
     */
-    virtual void sentMail(std::string);
+
     virtual void sendMail(std::string);
-    virtual void receiveMail(std::string);
-    virtual void fileRead(std::map<std::string, emailData>&, std::ifstream&);
-    virtual void fileWrite(std::map<std::string, emailData>&, std::ofstream&);
+    virtual bool receiveMail(std::string);
+    virtual bool sentMail(std::string);
+    virtual void fileRead(std::map<std::string, emailData>&);
+    virtual void fileWrite(std::map<std::string, emailData>&);
     virtual void deleteSentMail(std::string);
     virtual void deleteReceiveMail(std::string);
 
-};
-class EmailToMe :public EmailController {
-    emailData mail;
-public:
-    void sendMail(std::string) override;
-};
-class BusinessEmail :public EmailController {
-    emailData mail;
-public:
-    void setTitle(std::string);
-    void setContent(std::string);
-    void sendMail(std::string) override;
 };

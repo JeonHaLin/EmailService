@@ -95,10 +95,8 @@ void AccountController::fileRead(std::map<std::string, personalData>& v) {
 	fin.open("./userData.txt");
 	if (fin) {
 		userData.clear();
-		char temp;
 		std::string line;
 		while (!fin.eof()) {
-
 			std::getline(fin, line);
 
 			std::string id;
@@ -111,16 +109,15 @@ void AccountController::fileRead(std::map<std::string, personalData>& v) {
 			std::getline(iss, data.accountType, '|');
 			v.insert(std::make_pair(id, data));
 		}
+		fin.close();
 	}
 	else {
 		std::ofstream emptyFile("./userData.txt");
 		emptyFile.close();
 	}
-	fin.close();
 }
 void AccountController::fileWrite(std::map<std::string, personalData>& m) {
 	std::ofstream fout;
-
 	fout.open("./userData.txt");
 
 	if (!fout) {
@@ -132,7 +129,6 @@ void AccountController::fileWrite(std::map<std::string, personalData>& m) {
 		fout << it->second.password << '|';
 		fout << it->second.recoveryPhase << '|';
 		fout << it->second.accountType << '|' << '\n';
-
 	}
 	fout.close();
 }
@@ -172,8 +168,10 @@ void AccountController::deleteAcc(std::string name) {
 		Sleep(500);
 	}
 	std::cout << std::endl;
+	std::cout << "Successfully deleted." << std::endl;
+	std::cout << std::endl;
 	std::cout << "Thank you for using our program." << std::endl;
 	Sleep(500);
 	std::cout << "We hope to see you again." << std::endl;
-	Sleep(2000);
+
 }

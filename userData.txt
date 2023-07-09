@@ -1,2 +1,5 @@
-a,a,a
-b,b,b
+||||
+a|a|a|y|
+b|b|b|y|
+c|c|c|n|
+d|d|d|n|
