@@ -129,12 +129,16 @@
   <ItemGroup>
     <ClCompile Include="AccountController.cpp" />
     <ClCompile Include="EmailController.cpp" />
+    <ClCompile Include="EmailToCustomer.cpp" />
+    <ClCompile Include="EmailToMe.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AccountController.h" />
     <ClInclude Include="EmailController.h" />
+    <ClInclude Include="EmailToCustomer.h" />
+    <ClInclude Include="EmailToMe.h" />
     <ClInclude Include="MainController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
